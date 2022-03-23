@@ -23,7 +23,8 @@ def absolute_path(path: str) -> str:
     return os.path.join(main_path, path)
 
 clock = pygame.time.Clock()
-
+global bosses
+bosses = []
 RED_SPACESHIP = pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("assets",  "purple.png"))), 180)
 
 
@@ -33,12 +34,12 @@ RED_SPACESHIP = pygame.transform.rotate(pygame.image.load(absolute_path(os.path.
 BG = pygame.transform.scale(pygame.image.load(absolute_path(os.path.join("assets",  "background.png"))), (WIDTH, HEIGHT))
 
 
-def main():
+def game_run():
     run = True
     FPS = 60
     level = 0
-    main_font = pygame.font.SysFont("comicsans", 50)
-    lost_font = pygame.font.SysFont("comicsans", 60)
+    main_font = pygame.font.SysFont("Bauhaus 93", 50)
+    lost_font = pygame.font.SysFont("Bauhaus 93", 60)
 
     enemies = []
     wave_length = 5
@@ -60,8 +61,9 @@ def main():
         layers.append(layer)
 
         # tworzymy obiekty bossow, przekazujemy im layery przez referencje, dodajemy je do listy i zaczynamy ich watki
-        boss = Boss(random.randrange(100, WIDTH - 200),random.randrange(100, HEIGHT - 200),layer)
+        boss = Boss(random.randrange(100, WIDTH - 200),random.randrange(0, HEIGHT - 300),layer)
         bosses.append(boss)
+        boss.daemon = True
         boss.start()
 
     lost = False
@@ -71,8 +73,10 @@ def main():
         WIN.blit(BG, (0 ,0))
 
         level_label = main_font.render(f"Level: {level}", 1, (255 ,255, 255))
+        points_label = main_font.render(f"points: {player.points}", 1, (255 ,255, 255))
 
         WIN.blit(level_label, (WIDTH - 10 - level_label.get_width(), 10))
+        WIN.blit(points_label, (10, 10))
 
         for enemy in enemies:
             enemy.draw(WIN)
@@ -90,78 +94,10 @@ def main():
         # jednorazowo updateujemy zawartosc glownego okna, nigdzie w watkach nie updateujemy jakis fragmentow ekranu czy cos
         pygame.display.update()
 
-    while run:
-        clock.tick(120)
-        redraw_window()
 
-
-        #  lost screen
-        if player.health <= 0:
-            lost = True
-            lost_count += 1
-
-        if lost:
-            if lost_count > FPS * 5:
-                run = False
-            else:
-                continue
-
-
-        #  spawning enemies
-        if len(enemies) == 0:
-            level += 1
-            wave_length += 5
-            for i in range(wave_length):
-                enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500 -(500 * level), -100), random.choice(["red", "blue", "green"]))
-                enemies.append(enemy)
-
-
-        # events
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-
-
-        # keys
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_LEFT] and player.x - player_vel > 0: #  left
-            player.x -= player_vel
-        
-        if keys[pygame.K_RIGHT] and player.x + player_vel + player.get_width() < WIDTH: #  right
-            player.x += player_vel
-
-        if keys[pygame.K_UP] and player.y - player_vel > 0: #  up
-            player.y -= player_vel
-
-        if keys[pygame.K_DOWN] and player.y + player_vel + player.get_height() + 15 < HEIGHT: #  down
-            player.y += player_vel
-
-        if keys[pygame.K_z]:
-            player.shoot()
-
-
-        #  enemies
-        for enemy in enemies[:]:
-            enemy.move(enemy_vel)
-            enemy.move_lasers(enemy_laser_vel, player)
-
-            if random.randrange(0, 2*60) == 1:
-                enemy.shoot()
-
-            if collide(enemy, player):
-                player.health -= 10
-                player.x = 300
-                player.y = 630
-                enemies.remove(enemy)
-            elif enemy.y + enemy.get_height() > HEIGHT:
-                enemies.remove(enemy)
-
-        player.move_lasers(-player_laser_vel, enemies)
-
-def main_menu():
     run = True
-    title_font = pygame.font.SysFont("comicsans", 50)
+    title_font = pygame.font.SysFont("Bauhaus 93", 50)
+
     while run:
         WIN.blit(BG, (0, 0))
         title_label = title_font.render("Press the mouse to begin...", 1, (255, 255, 255))
@@ -169,12 +105,101 @@ def main_menu():
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                for boss in bosses:
+                    boss.join()
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                main()
+                while run:
+                    clock.tick(120)
+                    redraw_window()
 
+
+                    #  lost screen
+                    if player.health <= 0:
+                        lost = True
+                        lost_count += 1
+
+                    if lost:
+                        if lost_count > FPS * 5:
+                            run = False
+                        else:
+                            continue
+
+
+                    #  spawning enemies
+                    if len(enemies) == 0:
+                        level += 1
+                        wave_length += 5
+                        for i in range(wave_length):
+                            enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500 -(500 * level), -100), random.choice(["red", "blue", "green"]))
+                            enemies.append(enemy)
+
+
+                    # events
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+
+
+                    # keys
+                    keys = pygame.key.get_pressed()
+                    if keys[pygame.K_LEFT] and player.x - player_vel > 0: #  left
+                        player.x -= player_vel
+                    
+                    if keys[pygame.K_RIGHT] and player.x + player_vel + player.get_width() < WIDTH: #  right
+                        player.x += player_vel
+
+                    if keys[pygame.K_UP] and player.y - player_vel > 0: #  up
+                        player.y -= player_vel
+
+                    if keys[pygame.K_DOWN] and player.y + player_vel + player.get_height() + 15 < HEIGHT: #  down
+                        player.y += player_vel
+
+                    if keys[pygame.K_z]:
+                        player.shoot()
+                    if keys[pygame.K_ESCAPE]:
+                        for boss in bosses:
+                            boss.join()
+                        pygame.quit()
+
+
+                    #  enemies
+                    for enemy in enemies[:]:
+                        enemy.move(enemy_vel)
+                        enemy.move_lasers(enemy_laser_vel, player)
+
+                        if random.randrange(0, 2*60) == 1:
+                            enemy.shoot()
+
+                        if collide(enemy, player):
+                            player.health -= 10
+                            player.x = 300
+                            player.y = 630
+                            enemies.remove(enemy)
+                        elif enemy.y + enemy.get_height() > HEIGHT:
+                            enemies.remove(enemy)
+
+                    for boss in bosses:
+                        if collide(boss, player):
+                            print("collide b and p")
+                            boss.health -= 10
+                            player.health -= 1
+                            player.x = 300
+                            player.y = 600
+                            
+                        
+                            
+                    player.move_lasers(-player_laser_vel, enemies, bosses)
+
+def main():
+
+    game_run()
+    for boss in bosses:
+        boss.join()
+    os.sys.exit()
     pygame.quit()
+    
 
 
 if __name__ == "__main__":
-    main_menu()
+    main()

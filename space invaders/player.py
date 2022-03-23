@@ -23,8 +23,9 @@ class Player(Ship):
         self.laser_img = YELLOW_LASER
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.max_health = health
+        self.points = 0
 
-    def move_lasers(self, vel, enemies):
+    def move_lasers(self, vel, enemies, bosses):
         self.cooldown()
         for laser in self.lasers:
             laser.move(vel)
@@ -34,9 +35,17 @@ class Player(Ship):
                 for enemy in enemies:
                     if laser.collision(enemy):
                         enemies.remove(enemy)
+                        self.points += 100
                         if laser in self.lasers:
                             self.lasers.remove(laser)
-
+                for boss in bosses:
+                    if laser.collision(boss):
+                        if(boss.health <= 10):
+                            self.points += 500
+                        boss.health -= 10
+                        self.points += 100
+                        if laser in self.lasers:
+                            self.lasers.remove(laser)
     def draw(self, window):
         super().draw(window)
         self.healthbar(window)

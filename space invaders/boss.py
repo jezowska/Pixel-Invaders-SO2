@@ -19,12 +19,11 @@ YELLOW_LASER = pygame.image.load(absolute_path(os.path.join("assets",  "pixel_la
 
 
 class Boss(Ship, threading.Thread):
-    def __init__(self, x, y, layer, health=1000):
+    def __init__(self, x:int, y:int, layer:pygame.Surface, health=50):
         super().__init__(x, y, health)
         threading.Thread.__init__(self)
-
         self.bounced = 0
-
+        self.not_collision = True
         self.ship_img =  BOSS1_SPACESHIP
         self.laser_img = YELLOW_LASER
         self.mask = pygame.mask.from_surface(self.ship_img)
@@ -39,12 +38,13 @@ class Boss(Ship, threading.Thread):
             self.vel_x *= -1.0
             self.bounced += 1 
 
-        if  self.y < 0 or  (self.y + self.ship_img.get_height()) > HEIGHT:
+        if  self.y < 0 or  (self.y + self.ship_img.get_height()) > HEIGHT - 150:
             self.vel_y *= -1.0
             self.bounced += 1
     
     def run(self):
-        while (self.bounced < 10):# to odbijanie zostawilam bo to na razie jedyny sposob jaki mamy na organiczne usuwanie watkow ze statkami xd 
+        #self.bounced < 10 and
+        while ( self.health > 0):# to odbijanie zostawilam bo to na razie jedyny sposob jaki mamy na organiczne usuwanie watkow ze statkami xd 
             # trzba tu bedzie zaimplementowac zycie statkow w whileu
             # a i jakos niszczyc watki jak sie wyjdzie z gry, bo aktualnie jak przedwczesnie sie zakonczy gre to te watki sb nadal dzialaja w tle dopoki pamiec im sie nie skoczy
             clock.tick(60)
