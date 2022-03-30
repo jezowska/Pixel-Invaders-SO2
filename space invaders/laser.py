@@ -4,7 +4,7 @@ import time
 import os
 import random
 import threading
-from collide import collide
+from funcs import collide
 
 class Laser:
     def __init__(self, x, y, img):

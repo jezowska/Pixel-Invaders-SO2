@@ -6,18 +6,15 @@ import random
 import threading
 from laser import Laser
 from ship import Ship
-main_path = os.path.dirname(os.path.realpath(__file__))
+from funcs import absolute_path
 
-def absolute_path(path: str) -> str:
-    return os.path.join(main_path, path)
+RED_LASER = pygame.image.load(absolute_path(os.path.join("images",  "pixel_laser_red.png")))
+GREEN_LASER = pygame.image.load(absolute_path(os.path.join("images",  "pixel_laser_green.png")))
+BLUE_LASER = pygame.image.load(absolute_path(os.path.join("images",  "pixel_laser_blue.png")))
 
-RED_LASER = pygame.image.load(absolute_path(os.path.join("assets",  "pixel_laser_red.png")))
-GREEN_LASER = pygame.image.load(absolute_path(os.path.join("assets",  "pixel_laser_green.png")))
-BLUE_LASER = pygame.image.load(absolute_path(os.path.join("assets",  "pixel_laser_blue.png")))
-
-RED_SPACESHIP = pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("assets",  "purple.png"))), 180)
-GREEN_SPACESHIP = pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("assets",  "green.png"))), 180)
-BLUE_SPACESHIP = pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("assets",  "blue.png"))), 180)
+RED_SPACESHIP = pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("images",  "purple.png"))), 180)
+GREEN_SPACESHIP = pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("images",  "green.png"))), 180)
+BLUE_SPACESHIP = pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("images",  "blue.png"))), 180)
 
 class Enemy(Ship):
     COLOR_MAP = {

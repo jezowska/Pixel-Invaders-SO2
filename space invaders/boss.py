@@ -14,8 +14,8 @@ def absolute_path(path: str) -> str:
     return os.path.join(main_path, path)
 
 #  Load images
-BOSS1_SPACESHIP = pygame.transform.scale(pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("assets",  "boss1.png"))), 180), (150,150))           
-YELLOW_LASER = pygame.image.load(absolute_path(os.path.join("assets",  "pixel_laser_yellow.png")))
+BOSS1_SPACESHIP = pygame.transform.scale(pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("images",  "boss1.png"))), 180), (150,150))           
+YELLOW_LASER = pygame.image.load(absolute_path(os.path.join("images",  "pixel_laser_yellow.png")))
 
 
 class Boss(Ship, threading.Thread):
@@ -70,6 +70,8 @@ class Boss(Ship, threading.Thread):
         self.layer.fill((255,255,0)) # ostatnie wyczyszczenie layera, tak zeby wrak statku nie zostawal na ekranie jak sie watek skonczy
         # finally:
         #     mutex.release()
+        self.layer = None
+        self.join()
         
     def draw(self, window):
         super().draw(window)
@@ -85,8 +87,9 @@ class Boss(Ship, threading.Thread):
         self.y += self.vel_y
 
     def shoot(self):
-        if self.cool_down_counter == 0:
-            laser = Laser(self.x - 20, self.y, self.laser_img)
-            self.lasers.append(laser)
-            self.cool_down_counter = 1
+        if(random.randrange(0, 100) > 90):
+            if self.cool_down_counter == 0:
+                laser = Laser(self.x - 20, self.y, self.laser_img)
+                self.lasers.append(laser)
+                self.cool_down_counter = 1
 
