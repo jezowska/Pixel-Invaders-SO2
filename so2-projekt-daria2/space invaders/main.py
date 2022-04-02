@@ -91,16 +91,10 @@ def game_run():
                     continue
             
             
-
-            # spawning enemies
-            if len(bosses) == 0:
+            if len(enemies) == 0 and len(bosses) == 0:
                 level += 1
-                wave_length += 2
-                for i in range(wave_length):
-                    enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500 -(500 * level), -100), random.choice(["red", "blue", "green"]))
-                    enemies.append(enemy)
                 # creating bosses and their layers
-                for i in range(3):
+                for i in range(5):
                     # transparent layers on which bosses are going to be shown
                     layer = pygame.Surface((WIDTH,HEIGHT))
                     layer.set_colorkey((255,255,0))
@@ -112,6 +106,16 @@ def game_run():
                     bosses.append(boss)
                     boss.start()
 
+            # spawning enemies
+            if level >= 3 and len(enemies) == 0:
+                #level += 1
+                wave_length += 2
+                for i in range(wave_length):
+                    enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500 -(500 * level), -100), random.choice(["red", "blue", "green"]))
+                    enemies.append(enemy)
+                
+
+
 
             # quitting the game
             for event in pygame.event.get():
@@ -121,7 +125,7 @@ def game_run():
                         boss.health = 0
                         boss.join()
                         
-                    wait(1)   
+#                    wait(1)   
                     pygame.quit()
 
             # keys 
