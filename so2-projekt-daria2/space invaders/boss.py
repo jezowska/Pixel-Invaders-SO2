@@ -38,7 +38,7 @@ class Boss(Ship, threading.Thread):
             self.vel_x *= -1.0
             self.bounced += 1 
 
-        if  self.y < 0 or  (self.y + self.ship_img.get_height()) > HEIGHT - 150:
+        if  self.y < 0 or  (self.y + self.ship_img.get_height()) > HEIGHT:
             self.vel_y *= -1.0
             self.bounced += 1
     
@@ -46,35 +46,18 @@ class Boss(Ship, threading.Thread):
         return str(self.health)
 
     def run(self):
-        #self.bounced < 10 and
-        while ( self.health > 0):# to odbijanie zostawilam bo to na razie jedyny sposob jaki mamy na organiczne usuwanie watkow ze statkami xd 
-            # trzba tu bedzie zaimplementowac zycie statkow w whileu
-            # a i jakos niszczyc watki jak sie wyjdzie z gry, bo aktualnie jak przedwczesnie sie zakonczy gre to te watki sb nadal dzialaja w tle dopoki pamiec im sie nie skoczy
+        while ( self.health > 0):
             clock.tick(60)
-            self.move()
 
+            self.move()
             
             self.layer.fill((255,255,0)) # czyscimy layer danego bossa kolorem ktory zostal zdefiniowany jako przezroczysty przez colorkey
             self.draw(self.layer) # rysujemy statek bossa na czystym layerze
 
-            # te mutexy na przyszlosc zostawilam okomentowane, idk xd
 
-            # mutex.acquire()
-            # try:
-            #     self.layer.fill((255,255,0))
-            #     super().draw(self.layer)
-                
-                # pygame.draw.rect(WIN, (0,0,0), (old_x,  old_y, self.ship_img.get_width(), self.ship_img.get_height()))
-            # finally:
-            #     mutex.release()
-
-        # mutex.acquire()
-        # try:
         self.layer.fill((255,255,0)) # ostatnie wyczyszczenie layera, tak zeby wrak statku nie zostawal na ekranie jak sie watek skonczy
-        # finally:
-        #     mutex.release()
         self.layer = None
-        #self.join()
+
         
     def draw(self, window):
         super().draw(window)

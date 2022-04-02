@@ -45,21 +45,6 @@ def game_run():
     bosses = []
     layers = []
 
-    # creating bosses and their layers
-    for i in range(5):
-        # transparent layers on which bosses are going to be shown
-        layer = pygame.Surface((WIDTH,HEIGHT))
-        layer.set_colorkey((255,255,0))
-        layers.append(layer)
-
-        # creating a boss, assigning it its layer and starting its thread
-        boss = Boss(random.randrange(100, WIDTH - 200),random.randrange(0, HEIGHT - 300),layer)
-        print("boss: " + str(boss))
-        bosses.append(boss)
-        boss.start()
-
-    
-
     def redraw_window():
         WIN.blit(BG, (0 ,0))
 
@@ -90,10 +75,6 @@ def game_run():
         pygame.display.update()
 
     while run:
-        
-#        title_label = title_font.render("Press the mouse to begin...", 1, (255, 255, 255))
-#
-#        WIN.blit(title_label, (WIDTH/2 - title_label.get_width()/2, 350))
         while run:
             clock.tick(120)
             redraw_window()
@@ -108,15 +89,28 @@ def game_run():
                     run = False
                 else:
                     continue
+            
+            
 
             # spawning enemies
-            if len(enemies) == 0 and len(bosses) == 0:
+            if len(bosses) == 0:
                 level += 1
-                wave_length += 5
+                wave_length += 2
                 for i in range(wave_length):
                     enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500 -(500 * level), -100), random.choice(["red", "blue", "green"]))
                     enemies.append(enemy)
-                    
+                # creating bosses and their layers
+                for i in range(3):
+                    # transparent layers on which bosses are going to be shown
+                    layer = pygame.Surface((WIDTH,HEIGHT))
+                    layer.set_colorkey((255,255,0))
+                    layers.append(layer)
+
+                    # creating a boss, assigning it its layer and starting its thread
+                    boss = Boss(random.randrange(100, WIDTH - 200),random.randrange(0, HEIGHT - 300),layer)
+                    print("boss: " + str(boss))
+                    bosses.append(boss)
+                    boss.start()
 
 
             # quitting the game
@@ -129,7 +123,6 @@ def game_run():
                         
                     wait(1)   
                     pygame.quit()
-
 
             # keys 
             keys = pygame.key.get_pressed()
@@ -172,7 +165,6 @@ def main():
 
     game_run()
     pygame.quit()
-    
 
 if __name__ == "__main__":
     main()

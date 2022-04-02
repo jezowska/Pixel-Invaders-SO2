@@ -71,7 +71,7 @@ class Boss(Ship, threading.Thread):
         # finally:
         #     mutex.release()
         self.layer = None
-        self.join()
+        self.join
         
     def draw(self, window):
         super().draw(window)

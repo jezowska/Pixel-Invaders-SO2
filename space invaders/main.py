@@ -126,7 +126,7 @@ def game_run():
             player.move(keys)
             if keys[pygame.K_ESCAPE]:
                 for boss in bosses:
-                    boss.join()
+                    boss.join
 
             # moving enemies amd checking collisions
             for enemy in enemies[:]:
@@ -159,7 +159,7 @@ def game_run():
             player.move_lasers(-player_laser_vel, enemies, bosses)
 
     for boss in bosses:
-        boss.join()
+        boss.join
 
 def main():
 
