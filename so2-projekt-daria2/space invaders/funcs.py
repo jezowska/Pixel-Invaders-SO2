@@ -1,6 +1,7 @@
 import pygame
 import os
 
+#function which determines whether two objects have collided with eachother based on their collision masks
 def collide(obj1, obj2):
     offset_x = obj2.x - obj1.x
     offset_y = obj2.y - obj1.y
