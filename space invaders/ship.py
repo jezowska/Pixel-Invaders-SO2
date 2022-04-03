@@ -1,49 +1,46 @@
-import pygame
-import time
-import os
-import random
-import threading
-from laser import Laser
+from weapon import Weapon
 
 WIDTH, HEIGHT = 800, 750
 
 class Ship:
-    COOLDOWN = 15
-
     def __init__(self, x, y, health = 100):
         self.x = x
         self.y = y
         self.health = health
         self.ship_img = None
-        self.laser_img = None
-        self.lasers = []
+        self.weapon_img = None
+        self.weapons = []
         self.cool_down_counter = 0
     
+    # drawing ship on the screen
     def draw(self, window):
         window.blit(self.ship_img, (self.x, self.y))
-        for laser in self.lasers:
-            laser.draw(window)
+        for weapon in self.weapons:
+            weapon.draw(window)
 
-    def move_lasers(self, vel, obj):
+    # moving weapons, checking for collision or weapon's being offscreen
+    def move_weapons(self, vel, obj):
         self.cooldown()
-        for laser in self.lasers:
-            laser.move(vel)
-            if laser.off_screen(HEIGHT):
-                self.lasers.remove(laser)
-            elif laser.collision(obj):
+        for weapon in self.weapons:
+            weapon.move(vel)
+            if weapon.off_screen(HEIGHT):
+                self.weapons.remove(weapon)
+            elif weapon.collision(obj):
                 obj.health -= 10
-                self.lasers.remove(laser)
+                self.weapons.remove(weapon)
 
+    # prevent spamming weapon
     def cooldown(self):
         if self.cool_down_counter >= self.COOLDOWN:
             self.cool_down_counter = 0
         elif self.cool_down_counter > 0:
             self.cool_down_counter += 1
 
+    # shooting a weapon
     def shoot(self):
         if self.cool_down_counter == 0:
-            laser = Laser(self.x, self.y, self.laser_img)
-            self.lasers.append(laser)
+            weapon = Weapon(self.x, self.y, self.weapon_img)
+            self.weapons.append(weapon)
             self.cool_down_counter = 1
     
     def get_width(self):
