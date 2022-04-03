@@ -1,8 +1,7 @@
 # <center > Systemy Operacyjne 2 - Projekt </center>
-<center> Prowadzący: mgr inż. Tomasz Szandała </center>
-<center> Autorzy: Daria Jeżowska 252731</center>
-<center> </center>
-<center> Wiktoria Rekić 252830 </center> 
+<center> Prowadzący: mgr inż. Tomasz Szandała </center> <br>
+<center> Autorzy: Daria Jeżowska 252731</center> <br>
+<center> Wiktoria Rekić 252830 </center>  <br>
 <br></br>
 
 <div style="text-align: justify">
