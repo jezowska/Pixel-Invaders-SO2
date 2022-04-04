@@ -28,6 +28,7 @@ class Enemy(Ship):
     #init method calling for the parent's init and setting the appropriate images as its textures
     def __init__(self, x, y, color, health=100):
         super().__init__(x, y, health)
+        cool_down_counter = 0
         self.ship_img, self.weapon_img = self.COLOR_MAP[color]
         self.mask = pygame.mask.from_surface(self.ship_img)
     

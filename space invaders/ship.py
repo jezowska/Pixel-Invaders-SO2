@@ -3,6 +3,7 @@ from weapon import Weapon
 WIDTH, HEIGHT = 800, 750
 
 class Ship:
+    COOLDOWN = 15
     def __init__(self, x, y, health = 100):
         self.x = x
         self.y = y

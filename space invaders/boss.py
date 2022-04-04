@@ -41,7 +41,7 @@ class Boss(Ship, threading.Thread):
         if  self.x < 0 or  (self.x + self.ship_img.get_width()) > WIDTH:
             self.vel_x *= -1.0
 
-        if  self.y < 0 or  (self.y + self.ship_img.get_height()) > HEIGHT:
+        if  self.y < 0 or  (self.y + self.ship_img.get_height()) > HEIGHT - 100:
             self.vel_y *= -1.0
     
 
