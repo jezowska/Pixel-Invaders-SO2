@@ -23,20 +23,22 @@ pygame.display.set_caption("Pixel Invaders")
 
 clock = pygame.time.Clock()
 
-abort = 0
-
 def game_run():
     run = True
-    FPS = 60
+    FPS = 120
     lost = False
     lost_count = 0
 
     level = 0
+    bosses_count = 3
     enemies = []
-    wave_length = 5
     enemy_vel = 3
     player_weapon_vel = 15
     enemy_weapon_vel = 8
+    immunity = 0
+
+
+    temp=1
 
     # creating a player
     player = Player(300, 630)
@@ -74,96 +76,121 @@ def game_run():
         # updating main window
         pygame.display.update()
 
+
+    #main game loop
     while run:
-        while run:
-            clock.tick(120)
-            redraw_window()
+        clock.tick(FPS)
+        redraw_window()
 
-            # lost screen
-            if player.health <= 0:
-                lost = True
-                lost_count += 1
+        #decrementing the remaining immunity frames counter
+        if immunity > 0:
+            immunity -= 1
 
-            if lost:
-                if lost_count > FPS * 5:
-                    run = False
-                else:
-                    continue
-            
-            
-            if len(enemies) == 0 and len(bosses) == 0:
-                level += 1
-                # creating bosses and their layers
-                for i in range(3):
-                    # transparent layers on which bosses are going to be shown
-                    layer = pygame.Surface((WIDTH,HEIGHT))
-                    layer.set_colorkey((255,255,0))
-                    layers.append(layer)
+        # lost screen
+        if player.health <= 0:
+            lost = True
+            lost_count += 1
 
-                    # creating a boss, assigning it its layer and starting its thread
-                    boss = Boss(random.randrange(100, WIDTH - 200),random.randrange(0, HEIGHT - 300),layer)
-                    print("boss: " + str(boss))
-                    bosses.append(boss)
-                    boss.start()
+        if lost:
+            #joining boss threads
+            for boss in bosses:
+                boss.health = 0
+                boss.join()
 
-            # spawning enemies after level 3 and when there are no other enemies
-            if level >= 2 and len(enemies) == 0:
-                wave_length += 2
-                for i in range(wave_length):
-                    enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500 -(500 * level), -100), random.choice(["red", "blue", "green"]))
-                    enemies.append(enemy)
+            if lost_count > FPS * 5:
+                run = False
+            else:
+                continue
+        
+        
+        #beginning the next wave and spawning bosses
+        if len(bosses) == 0:
+            level += 1
 
-            # quitting the game and joining bosses
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    abort = 1
-                    for boss in bosses:
-                        boss.health = 0
-                        boss.join()
+            #incrementing the amount of bosses every 5 levels
+            if level%5 == 0:
+                bosses_count += 1
 
-                    pygame.quit()
+            # creating bosses and their layers
+            for i in range(bosses_count):
+                # transparent layers on which bosses are going to be shown
+                layer = pygame.Surface((WIDTH,HEIGHT))
+                layer.set_colorkey((255,255,0))
+                layers.append(layer)
 
-            # checking pressed keys and checking if player has to move or shoot
-            keys = pygame.key.get_pressed()
-            player.move(keys)
-            if keys[pygame.K_ESCAPE]:
+                # creating a boss, assigning it its layer and starting its thread
+                boss = Boss(random.randrange(100, WIDTH - 200), random.randrange(0, HEIGHT - 300), layer)
+                print("boss " + str(temp) + "\t" + str(boss))
+                
+                temp += 1
+                bosses.append(boss)
+                boss.start()
+
+            print()
+
+
+        #spawning enemies at random time intervals
+        if random.randrange(1, 20*FPS) <= level*5:
+            enemy = Enemy(random.randrange(50, WIDTH - 100), -100, random.choice(["red", "blue", "green"]))
+            enemies.append(enemy)
+
+
+        # quitting the game and joining bosses
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 for boss in bosses:
+                    boss.health = 0
                     boss.join()
 
-            # moving enemies and checking collisions
-            for enemy in enemies[:]:
-                enemy.move(enemy_vel)
-                enemy.move_weapons(enemy_weapon_vel, player)
+                pygame.quit()
 
-                if random.randrange(0, 2*60) == 1:
-                    enemy.shoot()
 
-                # checking for collision between player and enemy
-                if collide(enemy, player):
-                    player.health -= 10
-                    player.x = 300
-                    player.y = 630
-                    enemies.remove(enemy)
+        # checking pressed keys and checking if player has to move or shoot
+        keys = pygame.key.get_pressed()
+        player.move(keys)
+        #if keys[pygame.K_ESCAPE]:
+        #    for boss in bosses:
+        #        boss.health = 0
+        #        boss.join()
 
-                # deleting enemy if it's behind the border
-                elif enemy.y + enemy.get_height() > HEIGHT:
-                    enemies.remove(enemy)
 
-            # checking for collision between player and boss
-            for boss in bosses: 
-                if collide(boss, player):
-                    boss.health -= 10
-                    player.health -= 1
-                    player.x = 300
-                    player.y = 600
-                    
-            # if boss' health is 0 or less - removing boss
-            for boss in bosses:
-                if boss.health <= 0:
-                    bosses.remove(boss)
+        # moving enemies and checking collisions
+        for enemy in enemies[:]:
+            enemy.move(enemy_vel)
+            enemy.move_weapons(enemy_weapon_vel, player)
 
-            # moving player weapon and checking for collision with player's weapon
-            player.move_weapons(-player_weapon_vel, enemies, bosses)
+            if random.randrange(0, 2*FPS) == 1:
+                enemy.shoot()
+
+            # checking for collision between player and enemy
+            if collide(enemy, player) and immunity == 0:
+                player.health -= 10
+                enemies.remove(enemy)
+                immunity = FPS/2
+
+            # deleting the enemy if it's behind the border
+            elif enemy.y + enemy.get_height() > HEIGHT:
+                enemies.remove(enemy)
+
+
+        # checking for collision between player and bosses
+        for boss in bosses: 
+            if collide(boss, player) and immunity == 0:
+                boss.health -= 25
+                player.health -= 25
+                immunity = FPS/2
+
+
+        # if boss' health is 0 or less - removing boss
+        for boss in bosses:
+            if boss.health <= 0:
+                boss.join()
+                bosses.remove(boss)
+
+
+        # moving player weapon and checking for collision with player's weapon
+        player.move_weapons(-player_weapon_vel, enemies, bosses)
+
 
 def main():
 
