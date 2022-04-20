@@ -107,7 +107,7 @@ def game_run():
                     boss.start()
 
             # spawning enemies after level 3 and when there are no other enemies
-            if level >= 3 and len(enemies) == 0:
+            if level >= 2 and len(enemies) == 0:
                 wave_length += 2
                 for i in range(wave_length):
                     enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500 -(500 * level), -100), random.choice(["red", "blue", "green"]))
