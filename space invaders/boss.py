@@ -12,8 +12,6 @@ WIDTH, HEIGHT = 800, 750
 main_path = os.path.dirname(os.path.realpath(__file__))
 mutex = threading.Lock()
 
-
-
 # Load images
 BOSS1_SPACESHIP = pygame.transform.scale(
     pygame.transform.rotate(pygame.image.load(absolute_path(os.path.join("images", "boss1.png"))), 180), (150, 150))
@@ -51,9 +49,7 @@ class Boss(Ship, threading.Thread):
 
     # run() method used by the threading aspect of the class object, moves and draws the ship on its layer each frame, provided that its health is positive
     def run(self):
-
         while self.health > 0:
-
             clock.tick(60)
 
             self.move()
@@ -61,10 +57,8 @@ class Boss(Ship, threading.Thread):
             self.layer.fill((255, 255, 0))
             self.draw(self.layer)
 
-
         self.layer.fill((255, 255, 0))
         self.layer = None
-
 
     # draws the ship's image and its healthbar on the designated window
     def draw(self, window):
