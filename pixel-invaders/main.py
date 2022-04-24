@@ -126,7 +126,6 @@ def game_run():
                 bosses.append(boss)
                 boss.start()
 
-
         # spawning enemies at random time intervals
         if random.randrange(1, 20 * FPS) <= level * 5:
             enemy = Enemy(random.randrange(50, WIDTH - 100), -100, random.choice(["red", "blue", "green"]))
@@ -139,8 +138,6 @@ def game_run():
                     boss.health = 0
                     boss.join()
                 run = False
-
-
 
         # checking pressed keys and checking if player has to move or shoot
         keys = pygame.key.get_pressed()
@@ -170,10 +167,14 @@ def game_run():
 
         # checking for collision between player and bosses
         for boss in bosses:
-            if collide(boss, player) and immunity == 0:
-                boss.health -= 25
-                player.health -= 25
-                immunity = FPS / 2
+            mutex.acquire()
+            try:
+                if collide(boss, player) and immunity == 0:
+                    boss.health -= 25
+                    player.health -= 25
+                    immunity = FPS / 2
+            finally:
+                mutex.release()
 
         # if boss' health is 0 or less - removing boss
         for boss in bosses:
