@@ -144,8 +144,12 @@ def game_run():
         player.move(keys)
         if keys[pygame.K_ESCAPE]:
             for boss in bosses:
-                boss.health = 0
-                boss.join()
+                mutex.acquire()
+                try:
+                    boss.health = 0
+                    boss.join()
+                finally:
+                    mutex.release()
 
         # moving enemies and checking collisions
         for enemy in enemies[:]:
@@ -178,11 +182,15 @@ def game_run():
 
         # if boss' health is 0 or less - removing boss
         for boss in bosses:
-            if boss.health <= 0:
-                index = bosses.index(boss)
-                boss.join()
-                bosses.remove(boss)
-                layers.remove(layers[index])
+            mutex.acquire()
+            try:
+                if boss.health <= 0:
+                    index = bosses.index(boss)
+                    boss.join()
+                    bosses.remove(boss)
+                    layers.remove(layers[index])
+            finally:
+                mutex.release()
 
         # moving player weapon and checking for collision with player's weapon
         mutex.acquire()
