@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 import os
 import random
@@ -124,7 +126,6 @@ def game_run():
                 bosses.append(boss)
                 boss.start()
 
-            print()
 
         # spawning enemies at random time intervals
         if random.randrange(1, 20 * FPS) <= level * 5:
@@ -137,16 +138,17 @@ def game_run():
                 for boss in bosses:
                     boss.health = 0
                     boss.join()
+                run = False
 
-                pygame.quit()
+
 
         # checking pressed keys and checking if player has to move or shoot
         keys = pygame.key.get_pressed()
         player.move(keys)
-        #if keys[pygame.K_ESCAPE]:
-        #   for boss in bosses:
-        #       boss.health = 0
-        #       boss.join()
+        if keys[pygame.K_ESCAPE]:
+            for boss in bosses:
+                boss.health = 0
+                boss.join()
 
         # moving enemies and checking collisions
         for enemy in enemies[:]:
