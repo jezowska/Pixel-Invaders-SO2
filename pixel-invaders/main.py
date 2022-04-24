@@ -94,8 +94,12 @@ def game_run():
         if lost:
             # joining boss threads
             for boss in bosses:
-                boss.health = 0
-                boss.join()
+                mutex.acquire()
+                try:
+                    boss.health = 0
+                    boss.join()
+                finally:
+                    mutex.release()
 
             if lost_count > FPS * 5:
                 run = False
@@ -135,8 +139,12 @@ def game_run():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 for boss in bosses:
-                    boss.health = 0
-                    boss.join()
+                    mutex.acquire()
+                    try:
+                        boss.health = 0
+                        boss.join()
+                    finally:
+                        mutex.release()
                 run = False
 
         # checking pressed keys and checking if player has to move or shoot
