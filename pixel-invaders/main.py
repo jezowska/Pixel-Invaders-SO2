@@ -143,10 +143,10 @@ def game_run():
         # checking pressed keys and checking if player has to move or shoot
         keys = pygame.key.get_pressed()
         player.move(keys)
-        # if keys[pygame.K_ESCAPE]:
-        #    for boss in bosses:
-        #        boss.health = 0
-        #        boss.join()
+        #if keys[pygame.K_ESCAPE]:
+        #   for boss in bosses:
+        #       boss.health = 0
+        #       boss.join()
 
         # moving enemies and checking collisions
         for enemy in enemies[:]:
