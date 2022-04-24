@@ -120,6 +120,7 @@ def game_run():
                 print("boss " + str(temp) + "\t" + str(boss))
 
                 temp += 1
+
                 bosses.append(boss)
                 boss.start()
 
@@ -175,11 +176,17 @@ def game_run():
         # if boss' health is 0 or less - removing boss
         for boss in bosses:
             if boss.health <= 0:
+                index = bosses.index(boss)
                 boss.join()
                 bosses.remove(boss)
+                layers.remove(layers[index])
 
         # moving player weapon and checking for collision with player's weapon
-        player.move_weapons(-player_weapon_vel, enemies, bosses)
+        mutex.acquire()
+        try:
+            player.move_weapons(-player_weapon_vel, enemies, bosses)
+        finally:
+            mutex.release()
 
 
 def main():

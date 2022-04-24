@@ -1,10 +1,14 @@
+import time
+
 from weapon import Weapon
 
 WIDTH, HEIGHT = 800, 750
 
+
 class Ship:
     COOLDOWN = 15
-    def __init__(self, x, y, health = 100):
+
+    def __init__(self, x, y, health=100):
         self.x = x
         self.y = y
         self.health = health
@@ -12,10 +16,15 @@ class Ship:
         self.weapon_img = None
         self.weapons = []
         self.cool_down_counter = 0
-    
+
     # drawing ship on the screen
     def draw(self, window):
-        window.blit(self.ship_img, (self.x, self.y))
+        try:
+            window.blit(self.ship_img, (self.x, self.y))
+        except:
+            time.sleep((0.1))
+            window.blit(self.ship_img, (-self.x, -self.y))
+
         for weapon in self.weapons:
             weapon.draw(window)
 
@@ -43,10 +52,9 @@ class Ship:
             weapon = Weapon(self.x, self.y, self.weapon_img)
             self.weapons.append(weapon)
             self.cool_down_counter = 1
-    
+
     def get_width(self):
         return self.ship_img.get_width()
-    
+
     def get_height(self):
         return self.ship_img.get_height()
-

@@ -62,12 +62,12 @@ class Boss(Ship, threading.Thread):
 
     # draws the ship's image and its healthbar on the designated window
     def draw(self, window):
-        mutex.acquire()
+        mutex.acquire(timeout = 10)
         try:
             super().draw(window)
             self.healthbar(window)
         finally:
-            mutex.release()
+           mutex.release()
 
     # determines the healthbar's length and proceeds to draw it on the designated window
     def healthbar(self, window):
