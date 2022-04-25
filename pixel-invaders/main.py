@@ -123,7 +123,6 @@ def game_run():
 
                 # creating a boss, assigning it its layer and starting its thread
                 boss = Boss(random.randrange(100, WIDTH - 200), random.randrange(0, HEIGHT - 300), layer)
-                print("boss " + str(temp) + "\t" + str(boss))
 
                 temp += 1
 
@@ -190,15 +189,11 @@ def game_run():
 
         # if boss' health is 0 or less - removing boss
         for boss in bosses:
-            mutex.acquire()
-            try:
-                if boss.health <= 0:
-                    index = bosses.index(boss)
-                    boss.join()
-                    bosses.remove(boss)
-                    layers.remove(layers[index])
-            finally:
-                mutex.release()
+            if boss.health <= 0:
+                index = bosses.index(boss)
+                boss.join()
+                bosses.remove(boss)
+                layers.remove(layers[index])
 
         # moving player weapon and checking for collision with player's weapon
         mutex.acquire()
